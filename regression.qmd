@@ -1,0 +1,57 @@
+---
+title: "Regression"
+format: html
+---
+
+An end-to-end regression workflow follows a structured sequence of steps to take raw data, build a continuous predictive model, evaluate its performance, and prepare it for deployment.
+
+Unlike classification (which predicts discrete classes or categories), regression models predict continuous numerical values (e.g., house prices, temperature, or sales volume).
+
+---
+
+## Data Collection & Loading
+
+* **Gathering Data:** Collecting relevant historical datasets from databases, APIs, or public repositories.
+* **Initial Inspection:** Loading the data into a data structure (such as a Pandas DataFrame), checking dataset dimensions, inspecting data types, and identifying any missing values or anomalies.
+
+## Exploratory Data Analysis (EDA) & Data Cleaning
+
+* **Handling Missing Values:** Imputing missing entries using statistical measures (mean, median) or dropping incomplete records.
+* **Feature & Target Separation:** Separating the independent input features ($X$) from the continuous target variable ($y$) you want to predict.
+* **Distribution & Correlation Analysis:** Plotting feature distributions and correlation matrices (e.g., using scatter plots or heatmaps) to understand linear and non-linear relationships and detect multicollinearity.
+
+## Data Preprocessing & Feature Engineering
+
+* **Handling Categorical Variables:** Converting categorical features into numerical formats using techniques like One-Hot Encoding or Target Encoding.
+* **Feature Scaling:** Standardizing or normalizing continuous features (e.g., using `StandardScaler` or `MinMaxScaler`) so that features with larger numerical magnitudes do not disproportionately dominate distance-based or regularized models (like Ridge or Lasso regression).
+* **Feature Transformation:** Applying transformations (such as log transforms) to skewed target variables or features to stabilize variance.
+
+## Data Splitting
+
+* **Train-Test Split:** Partitioning the dataset into a training set (used to learn patterns) and a held-out test set (used for an unbiased final performance evaluation).
+* **Cross-Validation Setup:** Setting up k-fold cross-validation strategies to ensure robust hyperparameter tuning without overfitting to a single train-test split.
+
+## Model Selection & Hyperparameter Optimization
+
+* **Algorithm Selection:** Choosing appropriate regression algorithms depending on the problem structure—ranging from linear models (Linear Regression, Ridge, Lasso) to non-linear models (Decision Trees, Support Vector Regressors, Random Forests, Gradient Boosting, or Neural Networks).
+* **Hyperparameter Tuning:** Utilizing search strategies like Grid Search (`GridSearchCV`) or Random Search paired with cross-validation to find optimal model configurations (e.g., tree depths, regularization penalties, or learning rates).
+
+## Model Training
+
+* **Fitting the Model:** Training the optimized algorithm on the preprocessed training feature set ($X_{train}$) and corresponding continuous targets ($y_{train}$).
+
+## Evaluation & Validation
+
+* **Generating Predictions:** Predicting continuous values on the unseen test set ($X_{test}$).
+* **Calculating Regression Metrics:** Assessing performance using standard error and fit metrics:
+* **Mean Absolute Error (MAE):** The average absolute distance between predicted and actual values (interpretable in original units).
+* **Mean Squared Error (MSE) / Root Mean Squared Error (RMSE):** Penalizes larger errors more heavily by squaring the differences.
+* **$R^2$ Score (Coefficient of Determination):** Measures the proportion of variance in the dependent variable explained by the independent features.
+
+
+* **Residual Analysis:** Plotting residuals (actual minus predicted values) to check for homoscedasticity, non-linearity, or biased errors.
+
+## Deployment & Monitoring (Optional)
+
+* **Serialization:** Saving the trained model and preprocessing pipelines (using tools like `joblib` or `pickle`) for production use.
+* **Inference & Monitoring:** Deploying the model to serve real-time predictions while continuously tracking prediction errors and data drift over time.

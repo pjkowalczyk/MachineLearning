@@ -1,0 +1,41 @@
+{
+  "index.qmd": {
+    "index.html": "bd5cfbd6"
+  },
+  "intro.qmd": {
+    "intro.html": "e5ca08b2"
+  },
+  "summary.qmd": {
+    "summary.html": "063bff1f"
+  },
+  "references.qmd": {
+    "references.html": "79d8905e"
+  },
+  "eda.qmd": {
+    "eda.html": "5456050a"
+  },
+  "classification.qmd": {
+    "classification.html": "f8877084"
+  },
+  "regression.qmd": {
+    "regression.html": "0b3e5696"
+  },
+  "clustering.qmd": {
+    "clustering.html": "7a394d35"
+  },
+  "nlp.qmd": {
+    "nlp.html": "ea2884bc"
+  },
+  "llm.qmd": {
+    "llm.html": "455d063d"
+  },
+  "shapley.qmd": {
+    "shapley.html": "66d8c192"
+  },
+  "deepLearning.qmd": {
+    "deepLearning.html": "7c18accf"
+  },
+  "pycaret.qmd": {
+    "pycaret.html": "a94e7311"
+  }
+}

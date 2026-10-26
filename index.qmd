@@ -1,0 +1,7 @@
+# Preface {.unnumbered}
+
+> "One man's ways may be as good as another's, but we all like our own best." Jane Austen, *Persuasion* (1816). 
+
+A series of scripts introducing basic machine learning, natural language processing, large language models, and deep learning using the python ecosystem of packages.
+
+

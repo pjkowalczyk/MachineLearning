@@ -1,0 +1,44 @@
+# SHAP  (**SH**apley **A**dditive ex**P**lanations) {.unnumbered}
+
+Use **SHAP (SHapley Additive exPlanations)** values with **virtually any classification algorithm**.
+
+SHAP is model-agnostic, meaning it doesn't depend on the inner workings of a specific algorithm; instead, it works by evaluating how changing the inputs affects the model's output.
+
+Here are the most common classification algorithms grouped by type where SHAP is widely used:
+
+## Tree-Based Ensembles (Most Common)
+
+Tree models are where SHAP is used most frequently because SHAP has a specialized, ultra-fast explainer algorithm for them (`TreeExplainer`).
+
+* **Random Forest Classifier**
+* **XGBoost Classifier** (`XGBClassifier`)
+* **LightGBM Classifier** (`LGBMClassifier`)
+* **CatBoost Classifier** (`CatBoostClassifier`)
+* **Decision Tree Classifier**
+
+## Linear & Generalized Linear Models
+
+For linear models, SHAP helps one interpret the coefficients in an intuitive, game-theoretic way (`LinearExplainer`).
+
+* **Logistic Regression**
+* **Ridge Classifier**
+* **Linear Support Vector Classification (Linear SVC)**
+* **Stochastic Gradient Descent (SGD) Classifier**
+
+## Distance & Kernel-Based Models
+
+These models don't have built-in tree structures or simple linear equations, so SHAP uses a slower, model-agnostic sampling approach (`KernelExplainer`) to approximate the values.
+
+* **K-Nearest Neighbors (KNN) Classifier**
+* **Support Vector Machine (SVM) with RBF/Non-linear Kernel**
+
+## Neural Networks / Deep Learning
+
+For neural networks, SHAP can analyze activations and gradients to explain deep architectures (`DeepExplainer`).
+
+* **Multi-Layer Perceptron (MLP) Classifier** (Standard Deep Neural Networks)
+* **Convolutional Neural Networks (CNNs)** (Often used for image classification, like glaucoma fundus scans)
+
+## A Note on PyCaret Integration
+
+If one is using **PyCaret**, PyCaret’s `interpret_model()` automatically detects the underlying machine learning algorithm selected via `compare_models()` and applies the correct SHAP explainer behind the scenes, whether it's handling a LightGBM model, a Random Forest, or Logistic Regression!

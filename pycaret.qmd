@@ -1,0 +1,220 @@
+# PyCaret {.unnumbered}
+
+An end-to-end machine learning workflow using **PyCaret** leverages its low-code library to automate and streamline data preparation, model training, hyperparameter tuning, evaluation, and deployment. PyCaret acts as a wrapper around popular machine learning libraries like Scikit-Learn, LightGBM, XGBoost, and CatBoost.
+
+The standard steps in an end-to-end PyCaret workflow:
+
+---
+
+## Setup & Environment Initialization (`setup`)
+
+The `setup()` function is the mandatory starting point for any PyCaret workflow. It initializes the environment, creates the transformation pipeline, and automatically handles data preprocessing tasks.
+
+* **What it does:** Automatically detects data types (numerical vs. categorical), handles missing values through imputation, encodes categorical variables, and performs the train-test split.
+* **Code Example:**
+
+```{python}
+#| eval: false
+from pycaret.classification import *
+# or from pycaret.regression import *
+
+# Initialize setup
+clf_setup = setup(
+    data=df, 
+    target='Class', 
+    train_size=0.8, 
+    session_state=42,
+    normalize=True,
+    transformation=True
+)
+```
+
+## Comparing Models (`compare_models`)
+
+Instead of manually writing loops to test multiple algorithms, PyCaret allows one to evaluate all available models in the library with a single line of code.
+
+* **What it does:** Trains and evaluates all models using K-fold cross-validation and returns a styled performance leaderboard sorted by a chosen primary metric (e.g., F1-score, Accuracy, or $R^2$ for regression).
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+# Compare all models and find the best baseline
+best_model = compare_models(sort='F1')
+```
+
+## Creating Specific Models (`create_model`)
+
+To isolate a specific algorithm rather than relying on the top performer from `compare_models`, one can instantiate and train it individually using cross-validation.
+
+* **What it does:** Builds a specific model object and evaluates it using cross-validation scores.
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+# Train a Random Forest model with 5-fold cross-validation
+rf_model = create_model('rf')
+```
+
+## Tuning Hyperparameters (`tune_model`)
+
+PyCaret automates hyperparameter optimization using random grid searches over predefined or custom parameter spaces.
+
+* **What it does:** Automatically optimizes model parameters to maximize a specified evaluation metric.
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+# Tune the Random Forest model's hyperparameters
+tuned_rf = tune_model(rf_model, optimize='F1', n_iter=50)
+```
+
+## Ensembling & Blending (Optional)
+
+To further boost performance, PyCaret makes it easy to combine multiple models:
+
+* **Blending:** Combines predictions from multiple trained models using voting or averaging.
+* **Stacking:** Trains a meta-model on top of multiple base models.
+* **Bagging / Boosting:** Applies ensemble meta-estimators.
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+# Blend top 3 models together
+blended_models = blend_models(estimator_list=[model1, model2, model3])
+```
+
+## Evaluating Model Performance (`evaluate_model` / `plot_model`)
+
+PyCaret provides interactive or static visualizations to diagnose model behavior without needing manual Matplotlib/Seaborn code.
+
+* **What it does:** Generates ROC curves, confusion matrices, feature importance plots, precision-recall curves, and residual plots.
+* **Code Example:**
+```{python}
+#| eval: false
+
+# Open interactive evaluation UI (in Jupyter) or save plots
+evaluate_model(tuned_rf)
+
+# Or plot a specific chart
+plot_model(tuned_rf, plot='confusion_matrix')
+plot_model(tuned_rf, plot='feature')
+```
+
+## Finalizing the Model (`finalize_model`)
+
+Once satisfied with a trained model, one retrains it on the **entire dataset** (both training and test splits combined) to maximize the amount of data the model learns from before deployment.
+
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+final_model = finalize_model(tuned_rf)
+```
+
+## Making Predictions on Unseen Data (`predict_model`)
+
+One can apply the finalized model and preprocessing pipeline to completely new, unseen data.
+
+* **Code Example:**
+
+```{python}
+#| eval: false
+
+# Predict labels and probability scores on new data
+predictions = predict_model(final_model, data=new_unseen_df)
+```
+
+## Saving and Deploying the Model (`save_model`)
+
+PyCaret bundles the entire machine learning pipeline — including all data transformers, scalers, imputers, and the trained model itself — into a single deployment-ready binary file.
+
+* **Code Example:**
+```{python}
+#| eval: false
+
+# Save pipeline to disk
+save_model(final_model, 'pycaret_pipeline')
+
+# Later, to load and use it in production:
+# from pycaret.classification import load_model
+# loaded_pipeline = load_model('pycaret_pipeline')
+```
+
+## PRAXIS
+
+```{python}
+import pandas as pd
+from pycaret.classification import *
+```
+
+```{python}
+# 1. Load the dataset
+data = pd.read_csv('/Users/pjk/Wunderkammer/Machinelearning/Data/GlaucomaM.csv')
+
+# Preview the data
+print(data.sample(5))
+```
+
+```{python}
+# 2. Initialize the PyCaret Environment
+# 'Class' is the target column based on the GlaucomaM dataset structure
+s = setup(
+    data=data, 
+    target='Class', 
+    session_id=42, 
+    normalize=True,           # Normalize features
+    transformation=True,      # Apply power transformations for skewness
+    feature_selection=True,   # Automatically select important features
+    fold=5                    # 5-fold cross-validation
+)
+```
+
+```{python}
+# 3. Compare all available models to find the best performer
+best_model = compare_models()
+```
+
+```{python}
+# 4. Analyze the best model (e.g., Confusion Matrix, AUC, Feature Importance)
+evaluate_model(best_model)
+```
+
+```{python}
+# 5. Tune the best model hyperparameters
+tuned_best_model = tune_model(best_model)
+```
+
+```{python}
+# 6. Finalize the model for deployment
+final_model = finalize_model(tuned_best_model)
+```
+
+```{python}
+# 7. Save the model pipeline for future predictions
+save_model(final_model, 'glaucoma_classification_model')
+print("Model built, optimized, and saved successfully!")
+```
+
+```{python}
+# Assuming 'best_model' was returned by compare_models()
+holdout_predictions = predict_model(best_model)
+
+# View the predictions (includes 'prediction_label' and 'prediction_score')
+print(holdout_predictions.sample(10))
+```
+
+```{python}
+#| eval: false
+
+# Open interactive evaluation UI (in Jupyter) or save plots
+# evaluate_model(final_model)
+
+# Or plot a specific chart
+plot_model(final_model, plot='confusion_matrix')
+#plot_model(final_model, plot='feature')
+```

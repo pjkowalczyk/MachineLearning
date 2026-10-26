@@ -1,0 +1,13 @@
+/* styles.css */
+body {
+  font-family: "ETBook", Georgia, Cambria, "Times New Roman", Times, serif;
+  color: #111;
+  background-color: #fffff8; /* Warm paper tint */
+  max-width: 1400px;
+}
+
+/* Customizing margin notes appearance */
+.quarto-about-contents, .column-margin {
+  font-size: 0.85rem;
+  line-height: 1.3;
+}

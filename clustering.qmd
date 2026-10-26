@@ -1,0 +1,62 @@
+---
+title: "Clustering"
+format: html
+---
+
+An end-to-end clustering workflow is an **unsupervised machine learning** process used to group a set of unlabeled data points into natural clusters or segments, such that items in the same group are more similar to each other than to those in other groups.
+
+The key steps in a standard clustering pipeline:
+
+---
+
+## Data Collection & Loading
+
+* **Gathering Data:** Collecting relevant multi-dimensional datasets from databases, files, or repositories.
+* **Initial Inspection:** Loading the data into a data structure (such as a Pandas DataFrame), checking dataset dimensions, inspecting data types, and identifying missing values.
+
+## Exploratory Data Analysis (EDA) & Data Cleaning
+
+* **Handling Missing Values:** Imputing missing entries or dropping incomplete records, as many clustering distance metrics cannot handle null values.
+* **Feature Selection:** Selecting relevant variables that carry informative signal for grouping (since irrelevant features can introduce noise and distort distance calculations).
+* **Correlation Analysis:** Checking for multicollinearity among features to prevent certain dimensions from overweighting the distance metrics.
+
+## Data Preprocessing & Feature Engineering
+
+* **Feature Scaling (Crucial for Clustering):** Standardizing or normalizing continuous features (e.g., using `StandardScaler` or `MinMaxScaler`) so that features with larger numerical ranges do not disproportionately dominate distance-based algorithms like K-Means or DBSCAN.
+* **Dimensionality Reduction (Optional):** Applying techniques like Principal Component Analysis (PCA) or t-SNE when dealing with high-dimensional data to mitigate the "curse of dimensionality" and prepare the data for visualization.
+
+## Algorithm Selection
+
+Choosing an appropriate clustering algorithm based on the data's shape, size, and expected cluster characteristics:
+
+* **Partitioning Methods (e.g., K-Means):** Fast and scales well, but requires specifying the number of clusters ($k$) in advance and assumes spherical clusters.
+* **Density-Based Methods (e.g., DBSCAN):** Excellent for identifying arbitrary shapes and handling noise/outliers without requiring a pre-specified number of clusters.
+* **Hierarchical Clustering:** Builds a tree-like dendrogram showing nested clusters, making it useful when hierarchical relationships exist in the data.
+
+## Determining Optimal Hyperparameters
+
+* **Finding $k$ (for K-Means):** Utilizing diagnostic tools such as the **Elbow Method** (plotting inertia/distortion against $k$) or the **Silhouette Score** to find the optimal number of clusters.
+* **Tuning Neighborhood Parameters (for DBSCAN):** Tuning `eps` (neighborhood distance) and `min_samples` (minimum density threshold) to ensure meaningful cluster formation.
+
+## Model Fitting & Cluster Assignment
+
+* **Training/Clustering:** Running the chosen algorithm on the preprocessed feature space to assign every data point a cluster label (or categorizing them as noise).
+
+## Evaluation & Validation (Unsupervised Metrics)
+
+Since true labels are typically absent in clustering, evaluation relies on internal validation metrics:
+
+* **Silhouette Coefficient:** Measures how similar a point is to its own cluster compared to other clusters (ranging from -1 to +1, where higher scores indicate better-defined clusters).
+* **Calinski-Harabasz Index:** Ratio of between-cluster dispersion to within-cluster dispersion (higher is better).
+* **Davies-Bouldin Index:** Measures the average similarity between each cluster and its most similar counterpart (lower scores indicate better separation).
+* **Domain Validation:** Inspecting cluster profiles (e.g., calculating mean feature values per cluster) with subject-matter experts to verify if the groupings make practical, real-world sense.
+
+## Visualization & Interpretation
+
+* **Dimensionality Reduction for Plotting:** Projecting high-dimensional clusters onto 2D or 3D scatter plots (using PCA or t-SNE) colored by cluster assignment.
+* **Profiling:** Generating summary statistics or feature distributions for each cluster to interpret what each group represents.
+
+## Deployment & Downstream Use (Optional)
+
+* **Serialization:** Saving fitted scalers and clustering models using tools like `joblib` or `pickle`.
+* **Inference:** Assigning incoming new data points to existing clusters (e.g., assigning a new customer to an established purchasing persona segment).

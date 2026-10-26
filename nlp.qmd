@@ -1,0 +1,383 @@
+---
+title: "NLP"
+format: html
+---
+
+Natural Language Processing (NLP) bridges the gap between text and computational models, enabling algorithms to parse, understand, generate, and extract meaningful patterns from unstructured text data.
+
+## (Pre)processing Text
+
+Core steps in preparing raw text for natural language processing (NLP) analysis:
+
+###  Lowercasing:
+
+Convert all characters in the text to lowercase to ensure that words with different capitalizations (e.g., "Data", "DATA", and "data") are treated as identical tokens by models.
+```{python}
+import nltk
+
+# Ensure necessary NLTK data is downloaded (if needed for tokenization)
+nltk.download('punkt', quiet=True)
+
+# A list of 5 iconic sentences from The Hitchhiker's Guide to the Galaxy
+hitchhikers_quotes = [
+    "Don't Panic.",
+    "Space is big. Really big. You just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "Time is an illusion. Lunchtime doubly so.",
+    "The Answer to the Ultimate Question of Life, the Universe, and Everything is 42.",
+    "Far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Lowercase the sentences using standard Python, and optionally tokenize using NLTK
+lowercase_quotes = [quote.lower() for quote in hitchhikers_quotes]
+
+# Print each lowercased sentence with its index
+for i, quote in enumerate(lowercase_quotes, 1):
+    print(f"{i}. {quote}")
+```
+
+###  Tokenization:
+
+Split the continuous stream of text into smaller, discrete units, usually individual words, subwords, or sentences, using libraries like NLTK or spaCy.
+```{python}
+import nltk
+from nltk.tokenize import sent_tokenize
+
+# Ensure necessary NLTK data is downloaded for sentence tokenization
+nltk.download('punkt', quiet=True)
+
+# A list of 5 iconic sentences from The Hitchhiker's Guide to the Galaxy (all in lowercase)
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Tokenize each quote into individual sentences using NLTK
+tokenized_sentences = []
+for quote in lowercase_quotes:
+    sentences = sent_tokenize(quote)
+    tokenized_sentences.extend(sentences)
+
+# Print the resulting list of sentences
+for i, sentence in enumerate(tokenized_sentences, 1):
+    print(f"{i}. {sentence}")
+```
+
+###  Removing Noise and Special Characters:
+
+Strip out irrelevant elements such as HTML tags, URLs, emojis, and punctuation marks that do not add meaningful semantic value to the analysis.
+```{python}
+import re
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# 1. Tokenize into individual sentences
+tokenized_sentences = []
+for quote in lowercase_quotes:
+    tokenized_sentences.extend(sent_tokenize(quote))
+
+# 2. Remove noise and special characters from each sentence
+# Keep alphanumeric characters and standard spaces using regex
+cleaned_sentences = [
+    re.sub(r'[^a-z0-9\s]', '', sentence) for sentence in tokenized_sentences
+]
+
+# Print the cleaned sentences with their index
+for i, sentence in enumerate(cleaned_sentences, 1):
+    print(f"{i}. {sentence}")
+```
+
+### Removing Stop Words:
+
+Filter out extremely common, high-frequency words (such as "the", "is", "at", and "and") that carry little to no substantive thematic weight.
+```{python}
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# 1. Tokenize into individual sentences
+tokenized_sentences = []
+for quote in lowercase_quotes:
+    tokenized_sentences.extend(sent_tokenize(quote))
+
+# 2. Remove noise and special characters, then tokenize into words and remove stop words
+stop_words = set(stopwords.words('english'))
+processed_sentences = []
+
+for sentence in tokenized_sentences:
+    # Remove special characters
+    cleaned_sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+    
+    # Tokenize words and filter out stop words
+    words = word_tokenize(cleaned_sentence)
+    filtered_words = [word for word in words if word not in stop_words]
+    
+    # Rejoin words back into a sentence
+    processed_sentences.append(' '.join(filtered_words))
+
+# Print the final sentences with stop words removed
+for i, sentence in enumerate(processed_sentences, 1):
+    print(f"{i}. {sentence}")
+```
+
+###  Normalization (Stemming & Lemmatization):
+
+Reduce inflected or derived words down to their root base forms. *Stemming* uses crude heuristic rules to chop off word suffixes, while *lemmatization* uses vocabulary and morphological analysis to return the proper dictionary form (the lemma).
+
+::: panel-tabset
+## Stemming
+
+```{python}
+#| code-fold: true
+
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import PorterStemmer
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Initialize stemmer and stop words
+stemmer = PorterStemmer()
+stop_words = set(stopwords.words('english'))
+stemmed_sentences = []
+
+for quote in lowercase_quotes:
+    # 1. Tokenize into sentences
+    for sentence in sent_tokenize(quote):
+        # 2. Remove noise and special characters
+        cleaned_sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+        
+        # 3. Tokenize words, remove stop words, and apply stemming
+        words = word_tokenize(cleaned_sentence)
+        processed_words = [
+            stemmer.stem(word) for word in words if word not in stop_words
+        ]
+        
+        # 4. Rejoin words back into a sentence
+        stemmed_sentences.append(' '.join(processed_words))
+
+# Print the final stemmed sentences with their index
+for i, sentence in enumerate(stemmed_sentences, 1):
+    print(f"{i}. {sentence}")
+```
+
+## Lemmatization
+
+```{python}
+#| code-fold: true
+
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Initialize lemmatizer and stop words
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words('english'))
+lemmatized_sentences = []
+
+for quote in lowercase_quotes:
+    # 1. Tokenize into sentences
+    for sentence in sent_tokenize(quote):
+        # 2. Remove noise and special characters
+        cleaned_sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+        
+        # 3. Tokenize words, remove stop words, and lemmatize
+        words = word_tokenize(cleaned_sentence)
+        processed_words = [
+            lemmatizer.lemmatize(word) for word in words if word not in stop_words
+        ]
+        
+        # 4. Rejoin words back into a sentence
+        lemmatized_sentences.append(' '.join(processed_words))
+
+# Print the final lemmatized sentences with their index
+for i, sentence in enumerate(lemmatized_sentences, 1):
+    print(f"{i}. {sentence}")
+```
+:::
+
+###  Vectorization:
+
+Convert the cleaned, tokenized text into numerical representations (such as TF-IDF matrices, word embeddings, or transformer-based token IDs) so that machine learning algorithms and language models can process them mathematically.
+
+::: panel-tabset
+## Stemming
+
+```{python}
+#| code-fold: true
+
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import PorterStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Initialize stemmer and stop words
+stemmer = PorterStemmer()
+stop_words = set(stopwords.words('english'))
+stemmed_sentences = []
+
+for quote in lowercase_quotes:
+    # 1. Tokenize into sentences
+    for sentence in sent_tokenize(quote):
+        # 2. Remove noise and special characters
+        cleaned_sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+        
+        # 3. Tokenize words, remove stop words, and apply stemming
+        words = word_tokenize(cleaned_sentence)
+        processed_words = [
+            stemmer.stem(word) for word in words if word not in stop_words
+        ]
+        
+        # 4. Rejoin words back into a sentence
+        stemmed_sentences.append(' '.join(processed_words))
+
+# 5. Vectorize the stemmed sentences using TF-IDF
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(stemmed_sentences)
+
+# Display feature names (vocabulary) and the TF-IDF representation
+print("Vocabulary (Feature Names):")
+print(vectorizer.get_feature_names_out())
+
+print("\nTF-IDF Matrix Shape:", tfidf_matrix.shape)
+print("\nTF-IDF Matrix (Array representation):")
+print(tfidf_matrix.toarray())
+```
+
+## Lemmatization
+
+```{python}
+#| code-fold: true
+
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+
+lowercase_quotes = [
+    "don't panic.",
+    "space is big. really big. you just won't believe how vastly, hugely, mind-bogglingly big it is.",
+    "time is an illusion. lunchtime doubly so.",
+    "the answer to the ultimate question of life, the universe, and everything is 42.",
+    "far out in the uncharted backwaters of the unfashionable end of the western spiral arm of the galaxy lies a small unregarded yellow sun."
+]
+
+# Initialize lemmatizer and stop words
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words('english'))
+lemmatized_sentences = []
+
+for quote in lowercase_quotes:
+    # 1. Tokenize into sentences
+    for sentence in sent_tokenize(quote):
+        # 2. Remove noise and special characters
+        cleaned_sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+        
+        # 3. Tokenize words, remove stop words, and apply lemmatization
+        words = word_tokenize(cleaned_sentence)
+        processed_words = [
+            lemmatizer.lemmatize(word) for word in words if word not in stop_words
+        ]
+        
+        # 4. Rejoin words back into a sentence
+        lemmatized_sentences.append(' '.join(processed_words))
+
+# 5. Vectorize the lemmatized sentences using TF-IDF
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(lemmatized_sentences)
+
+# Display feature names (vocabulary) and the TF-IDF representation
+print("Vocabulary (Feature Names):")
+print(vectorizer.get_feature_names_out())
+
+print("\nTF-IDF Matrix Shape:", tfidf_matrix.shape)
+print("\nTF-IDF Matrix (Array representation):")
+print(tfidf_matrix.toarray())
+```
+:::
+
+## Text Summarization
+
+Text summarization is a natural language processing task that uses machine learning to distill a long document into a shorter version while preserving its core meaning, key information, and overall narrative.
+
+## Topic Modeling
+
+Topic modeling is an unsupervised machine learning technique that automatically scans documents to cluster words and uncover the hidden semantic themes or topics running through a large corpus of text.
+
+## Keywords-In-Context (KWIC)
+
+Keywords in context (KWIC) is a text analysis technique that displays a targeted search term alongside its immediate surrounding words to help quickly examine semantic usage patterns, sentiment, and linguistic context across a large corpus.

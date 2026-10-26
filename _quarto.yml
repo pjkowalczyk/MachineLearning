@@ -1,0 +1,34 @@
+project:
+  type: book
+
+book:
+  title: "Machine Learning Praxis"
+  author: "Paul J. Kowalczyk, PhD"
+  date: today
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - eda.qmd
+    - classification.qmd
+    - regression.qmd
+    - clustering.qmd
+    - nlp.qmd
+    - llm.qmd
+    - deepLearning.qmd
+    - summary.qmd
+    - part: "Appendices"
+      chapters:
+      - pycaret.qmd
+      - shapley.qmd
+    - references.qmd
+
+format:
+  html:
+    grid:
+      margin-width: 350px
+  pdf: default
+reference-location: margin
+citation-location: margin
+
+bibliography: references.bib
+
